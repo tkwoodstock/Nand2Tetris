@@ -25,6 +25,8 @@
 
 ## Project 9 - Interactive Tetris Game Written in Jack Language
 * Jack is a high-level object oriented language based on Java
+* The game is written using three jack class files (Block.jack, TetrisGame.jack, Main.jack), in accordance with the Model, View, Controller (MVC) software design pattern
+* Development time from concept to completion was approx. 15 hours
 * Key features of my tetris game:
     * Semi-random shape generator
     * 3-tiers of difficulty level (increasing difficulty = faster gameplay + greater variety in shapes)
