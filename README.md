@@ -31,8 +31,8 @@
     * Semi-random shape generator
     * 3-tiers of difficulty level (increasing difficulty = faster gameplay + greater variety in shapes)
     * Live score counter display
- 
-![Tyler_Tetris_Game_Gif](https://github.com/tkwoodstock/Nand2Tetris/assets/92792893/c3541315-9892-4a40-9a34-0f44a2fdaf84)
 
- 
+
+![Tylers_Tetris_gif_demo](https://github.com/tkwoodstock/Nand2Tetris/assets/92792893/e0f6bff8-a962-4a47-91ac-8286c2eb3a84)
+
 
