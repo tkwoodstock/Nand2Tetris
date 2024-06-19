@@ -1,0 +1,18 @@
+class Main {
+
+    function void main() {
+        
+        var TetrisGame game;
+        let game = TetrisGame.new();
+
+        do game.run_game();
+        do game.game_over();
+        do game.dispose();
+    
+
+        do Screen.clearScreen();
+
+        return;
+        
+    }
+}

@@ -1,0 +1,58 @@
+class Block {
+
+    // fields and vars
+    field int x;
+    field int y; // x, y coordinates of top left 
+    field int size;
+
+    // initialise new object instance
+    constructor Block create(int xcoord, int ycoord, int input_size) {
+        let x = xcoord;
+        let y = ycoord;
+        let size = input_size; // standard blocks size, joined together to make a shape
+        return this;
+    }
+
+    // free memory
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    // draw block
+    method void render(int x_in, int y_in) {
+        do Screen.setColor(true);
+        do Screen.drawRectangle(x_in, y_in, x_in + size, y_in + size);
+        return;
+    }
+
+    // erase block 
+    method void erase(int x_in, int y_in) {
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x_in, y_in, x_in+size, y_in+size);
+        return;
+    }
+
+    // method move left (fix movement in discrete elements for each key press)
+    method void move_left(int x_in, int y_in) {
+        do erase(x_in, y_in);
+        do render(x_in - size, y_in);
+        return;
+    }
+    // method move right
+    method void move_right(int x_in, int y_in) {
+        do render(x_in + size, y_in);
+        do erase(x_in, y_in);
+        return;
+    }
+    // method move down
+    method void move_down(int x_in, int y_in) {
+        do erase(x_in, y_in);
+        do render(x_in, y_in + size);
+        return;
+    }
+
+
+
+ 
+}

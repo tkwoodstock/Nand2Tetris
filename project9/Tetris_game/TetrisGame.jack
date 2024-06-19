@@ -1,0 +1,581 @@
+class TetrisGame {
+
+    field Block block; 
+    field int difficulty;
+    field int final_score;
+    
+
+    // constructor 
+    constructor TetrisGame new() {
+        let final_score = 0;
+        let difficulty = 0;
+        while ((difficulty < 1) | (difficulty > 3)) {
+            do Screen.clearScreen();
+            do Output.moveCursor(10, 3);
+            // get user to choose a difficulty by entering text with keyboard
+            let difficulty = Keyboard.readInt("Enter difficulty level (using keyboard): 1 | 2 | 3 :    ");
+        }
+        do Screen.clearScreen();
+        return this;
+    }
+
+    // free memory
+    method void dispose() {
+        do block.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+
+    method void run_game() {
+
+        // //  variables
+        // 1. borders
+        var int right_border;
+        var int left_border;
+        var int bottom_border;
+        var int top_border;
+        var int end_game_line; // if blocks reach this line, game is over
+
+        // 2. block dimensions variables
+        var int block_size; // size of each block
+        var int n_blocks; // number of blocks in shape
+        var int max_blocks; // maximum number of blocks in a shape in this game version
+        var Array x_positions; // x position of each block in shape
+        var Array y_positions; // y position of each block in shape
+        var Block block; // block used to draw each shape
+
+        // 3. game functionality variables
+        var boolean end_game;
+        var int key_pressed;
+        var int game_counter; // used in loop to move block down screen at regular increments 
+        var int reset_game_counter;
+
+        // playable block space
+        var Array x_coords_fixed_blocks; // xcoords of current rested blocks (fill with coordinates of each new shape when it settles)
+        var Array y_coords_fixed_blocks; // y coords of current rested blocks 
+        var int left_to_right_blocks; // number of blocks that can fit on the screen left to right
+        var int top_to_bottom_blocks; // number of blocks that can fit on the screen top to bottom
+        var int num_playable_blocks; // how many available blocks on screen (dictates size of above arrays)
+        var int num_filled_blocks; // how many playable blocks are filled
+        var boolean can_move; // used to determine if a move is possible
+
+        var int i; // while loop iterator
+        var int j; // second iterator for nested loops
+        var boolean break1; // to break from iterator
+        var boolean break2;// to break nested loops
+        var boolean draw_new_block; // draw another block at top of screen when current block reaches bottom
+        var int largest_valuex; // x coord of left most point
+        var int largest_valuey; // x coord of right most point
+        var int smallest_valuex; // x coord of left most point
+        var int smallest_valuey; // y coord of left most point
+        var int highest_point; // used to track the highest point of static blocks (end game when this reaches end_game_line)
+        var int score; // number of blocks player has placed
+
+        var int shape_num; // value of currently selected shape
+        var int number_of_shapes; // total number of shapes
+
+
+
+
+        // // assignment
+        // 1. borders (extra pixel to prevent erase method in left_move/right_move from deleting border)
+        let right_border = 481; // x max + 1
+        let left_border = 159; // x min - 1
+        let bottom_border = 241; // y max + 1
+        let top_border = 19; // y min - 1
+        let end_game_line = 59; 
+
+        // 2. block dimension variables 
+        // instanciate first block on screen
+        let block_size = 20; // size of each block
+        let max_blocks = 5;
+        let n_blocks = 3;
+        // Array to store the x,y coordinates of the moving blocks
+        let x_positions = Array.new(max_blocks);
+        let y_positions = Array.new(max_blocks);
+
+
+        // 3. set game variables
+        let end_game = false;
+        // let key pressed is set during game by player  
+        let game_counter = 0;
+        // game speed
+        let reset_game_counter = Math.divide(16, difficulty);
+
+        // number of blocks that fit inside screen
+        let left_to_right_blocks = 1 + (((right_border - 1) - (left_border + 1)) / block_size);
+        let top_to_bottom_blocks = 1 + (((bottom_border - 1) - (end_game_line + 1)) / block_size);
+        let num_playable_blocks = Math.multiply(left_to_right_blocks, top_to_bottom_blocks);
+        let num_filled_blocks = 0;
+
+        // playable block space
+        let x_coords_fixed_blocks = Array.new(num_playable_blocks); // array size is available space / block size
+        let y_coords_fixed_blocks = Array.new(num_playable_blocks); 
+        let i = 0;
+        let smallest_valuex = left_border + 1;
+        while (i < left_to_right_blocks) {
+            let x_coords_fixed_blocks[i] = smallest_valuex; // x coords of bottom of playable screen
+            let y_coords_fixed_blocks[i] = bottom_border - 1; // paired with y coords of bottom of playable screen ()
+
+            let smallest_valuex = smallest_valuex + block_size;
+            let i = i + 1;
+            let num_filled_blocks = num_filled_blocks + 1; // first 17 blocks of bottom row are filled
+        }
+
+
+        // number of shapes 
+        if (difficulty = 1) {
+            let number_of_shapes = 10; // 10 different shapes in easy mode  
+            let shape_num = 1; // choose first shape to appear (small L) 
+        }
+        if (difficulty = 2) {
+            let number_of_shapes = 12; // 12 different shapes on medium and hard mode 
+            let shape_num = 4; // choose first shape to appear (big L)  
+        }
+        if (difficulty = 3) {
+            let number_of_shapes = 14; // 14 different shapes on medium and hard mode (cross and vertical bar added)
+            let shape_num = 13; // choose first shape to appear (cross) 
+        }
+
+
+        // player starting score 
+        let score = 0;
+
+
+        // 4. prepare to start game
+        
+        // placeholder block (disposed and recreated in first loop)
+        let block = Block.create(300 + block_size, 40 + block_size, block_size); 
+        // instruct to draw a shape upon entering first loop (shape depends on difficult level)
+        let draw_new_block = true;
+
+        // draw borders
+        do Screen.drawLine(right_border, top_border, right_border, bottom_border);
+        do Screen.drawLine(left_border, top_border, left_border, bottom_border);
+        do Screen.drawLine(left_border, bottom_border, right_border, bottom_border);
+        do Screen.drawLine(left_border, top_border, right_border, top_border);
+
+        // end game line (double line for better format)
+        do Screen.drawLine(left_border, end_game_line, right_border, end_game_line);
+        do Screen.drawLine(left_border, end_game_line-4, right_border, end_game_line-4);
+
+        // display difficulty on screen for duration of game
+        do Output.moveCursor(3, 30);
+        do Output.printString("Difficulty level: ");
+        do Output.printInt(difficulty);
+
+
+        // loop until game is quit with "q"
+        while (end_game = false) {
+
+            // assign key_pressed upon each loop //
+            let key_pressed = Keyboard.keyPressed(); 
+
+            // exit game
+            if (key_pressed = 113) {
+                let end_game = true;
+            }
+
+
+            // DRAW NEW BLOCK AT TOP OF SCREEN
+            if ((draw_new_block = true) & (end_game = false)) {
+                
+
+                // display updated score on side of scree
+                do Output.moveCursor(10, 2);
+                do Output.printString("Score: ");
+                do Output.printInt(score);
+
+                // reset move down counter
+                let game_counter = 0;
+                
+                // manually set shape_num for testing each shape in developmen
+                //let shape_num = 14; //
+                
+                // free memory for block
+                do block.dispose(); 
+
+                // draw new shape depending on shape_num ----------------------------------
+                if (shape_num = 1) { 
+                    // small L
+                    let n_blocks = 3;
+                    let x_positions[0] = 320; let x_positions[1] = 320; let x_positions[2] = 340; 
+                    let y_positions[0] = 60; let y_positions[1] = 80; let y_positions[2] = 80; 
+                }
+                if ((shape_num = 2) | (shape_num = 3)) { 
+                    // box (2x likelihood of getting box)
+                    let n_blocks = 4;
+                    let x_positions[0] = 320; let x_positions[1] = 320; let x_positions[2] = 340; let x_positions[3] = 340;
+                    let y_positions[0] = 60; let y_positions[1] = 80; let y_positions[2] = 60; let y_positions[3] = 80;
+                }
+                if (shape_num = 4) {
+                    // big L
+                    let n_blocks = 5;
+                    let x_positions[0] = 320; let x_positions[1] = 320; let x_positions[2] = 320; let x_positions[3] = 340; let x_positions[4] = 360;
+                    let y_positions[0] = 60; let y_positions[1] = 80; let y_positions[2] = 100; let y_positions[3] = 100; let y_positions[4] = 100;
+                }
+                if (shape_num = 5) {
+                    // single block, 
+                    let n_blocks = 1;
+                    let x_positions[0] = 320; 
+                    let y_positions[0] = 60; 
+                }
+                if (shape_num = 6) {
+                    // reversed small L
+                    let n_blocks = 3;
+                    let x_positions[0] = 320; let x_positions[1] = 320; let x_positions[2] = 300;
+                    let y_positions[0] = 60; let y_positions[1] = 80; let y_positions[2] = 80;
+                }
+                if (shape_num = 7) {
+                    // reversed big L
+                    let n_blocks = 5;
+                    let x_positions[0] = 320; let x_positions[1] = 320; let x_positions[2] = 320; let x_positions[3] = 300; let x_positions[4] = 280;
+                    let y_positions[0] = 60; let y_positions[1] = 80; let y_positions[2] = 100; let y_positions[3] = 100; let y_positions[4] = 100;
+                }
+                if (shape_num = 8) {
+                    // upside down L
+                    let n_blocks = 3;
+                    let x_positions[0] = 320; let x_positions[1] = 340; let x_positions[2] = 320;
+                    let y_positions[0] = 60; let y_positions[1] = 60; let y_positions[2] = 80; 
+                }
+                if (shape_num = 9) {
+                    // horizontal bar
+                    let n_blocks = 3;
+                    let x_positions[0] = 300; let x_positions[1] = 320; let x_positions[2] = 340; 
+                    let y_positions[0] = 60; let y_positions[1] = 60; let y_positions[2] = 60; 
+                }
+                if (shape_num = 10) {
+                    // upside down big L
+                    let n_blocks = 5;
+                    let x_positions[0] = 320; let x_positions[1] = 340; let x_positions[2] = 360; let x_positions[3] = 320; let x_positions[4] = 320; 
+                    let y_positions[0] = 60; let y_positions[1] = 60; let y_positions[2] = 60;  let y_positions[3] = 80; let y_positions[4] = 100; 
+                }
+                if (shape_num = 11) {
+                    // upside down reversed big L
+                    let n_blocks = 5;
+                    let x_positions[0] = 320; let x_positions[1] = 300; let x_positions[2] = 280; let x_positions[3] = 320; let x_positions[4] = 320; 
+                    let y_positions[0] = 60; let y_positions[1] = 60; let y_positions[2] = 60;  let y_positions[3] = 80; let y_positions[4] = 100;
+                }
+                if (shape_num = 12) {
+                    // upside down reversed L
+                    let n_blocks = 3;
+                    let x_positions[0] = 320; let x_positions[1] = 320; let x_positions[2] = 300;
+                    let y_positions[0] = 60; let y_positions[1] = 80; let y_positions[2] = 60; 
+                }
+                if (shape_num = 13) {
+                    // cross
+                    let n_blocks = 5;
+                    let x_positions[0] = 340; let x_positions[1] = 340; let x_positions[2] = 340; let x_positions[3] = 360; let x_positions[4] = 320;
+                    let y_positions[0] = 60; let y_positions[1] = 80; let y_positions[2] = 100; let y_positions[3] = 80; let y_positions[4] = 80;
+                }
+                if (shape_num = 14) {
+                    // vertical bar
+                    let n_blocks = 3;
+                    let x_positions[0] = 320; let x_positions[1] = 320; let x_positions[2] = 320;
+                    let y_positions[0] = 60; let y_positions[1] = 80; let y_positions[2] = 100;
+                }
+                
+
+
+                // instanciate the new shape
+                let block = Block.create(x_positions[0], y_positions[0], block_size); 
+                // render the new shape
+                let i = 0;
+                while (i < n_blocks) {
+                    do block.render(x_positions[i], y_positions[i]);
+                    let i = i + 1;
+                }
+
+
+                let draw_new_block = false;
+            }
+            // end of draw new shape -----------------------------------------------------------------
+
+
+
+            // MOVE IF LEFT IF CAN MOVE
+            if (key_pressed = 130) {
+                let can_move = false; // assume cannot move 
+
+                // reset smallest value in array (left most point in shape) 
+                let i = 0;
+                let smallest_valuex = x_positions[0]; 
+                let smallest_valuey = y_positions[0];
+                while (i < n_blocks) {
+                    if (x_positions[i] < smallest_valuex) {
+                        let smallest_valuex = x_positions[i];
+                        let smallest_valuey = y_positions[i];
+                    }
+                    let i = i + 1;
+                }
+
+
+                // if left most point in shape not touching left border, then move shape left one space
+                if (smallest_valuex > (left_border + block_size)) {
+                    // check if there is space for shape to move left
+                    let can_move = true; // assume 
+                    let i = 0;
+                    let break2 = false;
+                    let break1 = false;
+                    while ((i < n_blocks) & (break2 = false)) {
+                        let j = 0;
+
+                        while ((j < num_filled_blocks) & (break1 = false)) {
+                            if ((x_positions[i] - block_size = x_coords_fixed_blocks[j]) & (y_positions[i] = y_coords_fixed_blocks[j])) {
+                                
+                                let can_move = false; // some part of the shape cannot move right
+                                let break1 = true; // break from loops
+                                let break2 = true;
+
+                            }
+                            let j = j + 1;
+                        }
+                        let i = i + 1;
+                    }
+                }
+                
+
+                // if can move left, move left
+                if (can_move = true) {
+                    // short pause before L/R movements (prevents user sliding across screen very fast) 
+                    do Sys.wait(300); 
+                    
+                    let i = 0;
+                    while (i < n_blocks) {
+                        do block.erase(x_positions[i], y_positions[i]);
+                        let x_positions[i] = x_positions[i] - block_size; // new x coordinate
+
+                        let i = i + 1; // draw next block in shape
+                    }
+                    let i = 0;
+                    while (i < n_blocks) {
+                        do block.render(x_positions[i], y_positions[i]);
+
+                        let i = i + 1; // draw next block in shape
+                    }
+                }
+
+            }
+            // end of move left 
+
+
+            // MOVE RIGHT IF CAN MOVE
+            if (key_pressed = 132) {
+                let can_move = false; // assume cannot move 
+
+                // reset largest valuex (directionally right most point in shape)
+                let i = 0;
+                let largest_valuex = x_positions[0]; 
+                let largest_valuey = y_positions[0];
+                while (i < n_blocks) {
+                    if (x_positions[i] > largest_valuex) {
+                        let largest_valuex = x_positions[i];
+                    }
+                    let i = i + 1;
+                }
+
+
+                // if right most point in shape not touching right border, then move shape right one space
+                if (largest_valuex < ((right_border-1) - block_size)) {
+
+                    let can_move = true; // assume 
+                    let i = 0;
+                    let break2 = false;
+                    let break1 = false;
+                    while ((i < n_blocks) & (break2 = false)) {
+                        let j = 0;
+
+                        while ((j < num_filled_blocks) & (break1 = false)) {
+                            if ((x_positions[i] + block_size = x_coords_fixed_blocks[j]) & (y_positions[i] = y_coords_fixed_blocks[j])) {
+                                
+                                let can_move = false; // some part of the shape cannot move right
+                                let break1 = true; // break from loops
+                                let break2 = true;
+
+                            }
+                            let j = j + 1;
+                        }
+                        let i = i + 1;
+                    }
+                }
+
+
+                // if can move right, move right 
+                if (can_move = true) {
+
+                    // short pause before L/R movements (prevents user sliding across screen very fast) 
+                    do Sys.wait(300);  
+
+                    let i = 0;
+                    while (i < n_blocks) {
+                        do block.erase(x_positions[i], y_positions[i]);
+                        let x_positions[i] = x_positions[i] + block_size; // new x coordinate
+
+                        let i = i + 1; // draw next block in shape
+                    }
+                    let i = 0;
+                    while (i < n_blocks) {
+                        do block.render(x_positions[i], y_positions[i]);
+
+                        let i = i + 1; // draw next block in shape
+                    }
+                }
+
+            }
+            // end of move right
+
+
+            
+
+            // MOVE DOWN IF CAN MOVE (reset game counter every n cycles (n = reset_game_counter))
+            if (game_counter = reset_game_counter) {
+                let game_counter = 0; // reset game counter
+                let can_move = true; // block will move unless proven it cannot
+
+                // increment / reset  random shape number selector    
+                if (shape_num = number_of_shapes) {
+                    let shape_num = 0;
+                }
+                if (shape_num < number_of_shapes){
+                    let shape_num = shape_num + 1;
+                }
+
+
+
+                // find largest value in array (lowest point in shape)
+                let i = 0;
+                let largest_valuey = y_positions[0]; 
+                while (i < n_blocks) {
+                    if (y_positions[i] > largest_valuey) {
+                        let largest_valuey = y_positions[i];
+                    }
+                    let i = i + 1;
+                }
+
+                // check if all points in shape can move down a space 
+                let i = 0;
+                while (i < n_blocks) {
+                    let j = 0;
+                    let break1 = false;
+
+                    while ((j < num_filled_blocks) & (break1 = false)) {
+                        if ((x_positions[i] = x_coords_fixed_blocks[j]) & ((y_positions[i] + 20) = y_coords_fixed_blocks[j])) {
+
+                            // if block reaches bottom of screen
+                            let draw_new_block = true; // some part of the shape has reached the bottom of the playable screen
+
+                            let can_move = false; // shape cannot move down, there is not space
+
+                            let break1 = true; // check next block in shape
+
+                        }
+                        let j = j + 1;
+                    }
+                    let i = i + 1;
+                }
+
+                // if cant move, add new coordinates of this new fixed block to all filled static positions
+                if (can_move = false) {
+
+                    // increment score by size of completed block if game still running
+                    let score = score + n_blocks;
+
+                    let i = 0;
+                    let j = 0;
+
+                    // go from next free space in array up n_blocks, filling in each new fixed coordinate
+                    while (i < n_blocks) {
+                        
+                        let x_coords_fixed_blocks[i + num_filled_blocks] = x_positions[j];
+                        let y_coords_fixed_blocks[i + num_filled_blocks] = y_positions[j];
+
+                        let i = i + 1;
+                        let j = j + 1;
+                    }   
+                    let num_filled_blocks = num_filled_blocks + n_blocks; // number of blocks in shape noadded to number filled blocks
+                }
+
+                // if can move, move all blocks in shape down one space
+                if (can_move = true) {
+                    let i = 0;
+                    while (i < n_blocks) {
+
+                        do block.erase(x_positions[i], y_positions[i]);
+
+                        //do block.move_down(x_positions[i], y_positions[i]); // block steadily moves down the screen
+                        let y_positions[i] = y_positions[i] + block_size; // new y coordinate
+
+                        let i = i + 1;
+                    }
+
+                    let i = 0;
+                    while (i < n_blocks) {
+
+                        do block.render(x_positions[i], y_positions[i]);
+                        let i = i + 1;
+                    }
+                }
+
+            }
+            // end of move down
+
+
+
+
+
+            // Track highest point of static blocks
+            let i = 0;
+            let highest_point = y_coords_fixed_blocks[i];
+            while (i < num_filled_blocks) {
+                if (highest_point > y_coords_fixed_blocks[i]) {
+                    let highest_point = y_coords_fixed_blocks[i];
+                }
+
+                let i = i + 1;
+            }
+
+
+            // Check if game over // ONLY CAN HAVE CODE WITH CONDITION if (end_game = false) BELOW THIS 
+            if ((highest_point) = (end_game_line + 1)) {
+                let end_game = true;
+                let final_score = score;
+            }   
+
+
+
+            // ABOUT TO REENTER WHILE LOOP (THESE OCCUR ON EACH ITERATION BEFORE LOOPING AGAIN):
+            // increment game counter + 1 each loop, when game counter = reset_game_counter then block moves down screen
+            // game counter = number of while loops before block moves down screen
+            let game_counter = game_counter + 1;
+
+
+            // Sys.wait to slow speed shape moves across screen from arrow key input
+            do Sys.wait(1500);
+                
+
+        } 
+        // when "q" pressed or game over, exit loop and return
+        return;
+
+    }
+
+    // method end game functioanlity (display game over with score on screen) 
+    method void game_over() {
+        do Output.moveCursor(3, 25);
+        do Output.printString("G A M E -_-_-_-_-_- O V E R ");
+        do block.dispose();
+
+        do Output.moveCursor(10, 2);
+        do Output.printString("FINAL SCORE: ");
+        do Output.printInt(final_score);
+        
+        do Output.moveCursor(13, 4);
+        do Output.printString("Press enter");
+        do Output.moveCursor(14, 5);
+        let difficulty = Keyboard.readInt("to close");
+
+        return;
+    }
+
+}
