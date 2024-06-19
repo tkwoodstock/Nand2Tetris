@@ -1,0 +1,19 @@
+@42
+D = M
+@15
+(JMPVAR1)
+M =D
+@75
+(LOOP)
+D; JMP
+(ANOTHER)
+AD = D   &  M  ; JGT
+@ test_variable
+D = M
+
+@ test_variable
+@ test_variable22
+@ test_variable33
+D = M+ 1
+@ANOTHER
+@JMPVAR1
