@@ -1,4 +1,4 @@
-# Tyler Woodstock projects for Nand2Tetris
+# Tyler Woodstock Projects for Nand2Tetris
 
 ## Project 6 - Assembly Code to Machine Code Translator
 * Assembly code translator that processes Hack assembly language and translates into 16-bit machine code
