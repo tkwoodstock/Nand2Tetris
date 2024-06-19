@@ -1,4 +1,4 @@
-from assembler1 import assembler
+from assembler import assembler
 
 
 test_base = "nand2tetris_project6/test_files/"
