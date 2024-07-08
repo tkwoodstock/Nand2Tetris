@@ -42,7 +42,6 @@
 
 ## Project 10 - Code Compiler Part 1: Syntax Analysis
 * JackAnalyser.py takes a file or directory as an argument and translates each ".jack" file into a ".xml" file
-* The output xml file(s) is
 * The result is acheived with three classes: JackAnalyser, JackTokeniser, and CompilationEngine
     * JackAnalyser: Defines keywords, creates blank xml files for output, instanciates JackTokeniser and Compilation Engine
     * JackTokeniser: Reads input jack file character by character, groups collections of characters that satisfy the "token" definition, and stores in a list
