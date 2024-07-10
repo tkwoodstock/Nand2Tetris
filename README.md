@@ -22,6 +22,10 @@
 *  This is part 1 of the VM translator, this script cannot translate:
     * Branching commands (e.g., goto, if-goto)
     * Function commands (e.g., call, return)
+ 
+
+![vm_to_assembly](https://github.com/tkwoodstock/Nand2Tetris/assets/92792893/9a700d60-909a-4e46-85a3-f3c4d7eb304c)
+
 
 
 
