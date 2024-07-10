@@ -46,7 +46,8 @@
     * Live score counter display
 
 
-![Tylers_Tetris_gif_demo](https://github.com/tkwoodstock/Nand2Tetris/assets/92792893/e0f6bff8-a962-4a47-91ac-8286c2eb3a84)
+![my_tetris_clip](https://github.com/tkwoodstock/Nand2Tetris/assets/92792893/e5f36e93-b706-44df-829d-ba0d39c6f8d2)
+
 
 
 
