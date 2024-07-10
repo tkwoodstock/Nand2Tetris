@@ -9,7 +9,8 @@
     * C-instructions (to target ALU and PC)
 
 
-![assembly_to_machine](https://github.com/tkwoodstock/Nand2Tetris/assets/92792893/7e589f6c-c7bf-4a83-ab47-9b44bef0f665)
+
+![assembly_to_machine](https://github.com/tkwoodstock/Nand2Tetris/assets/92792893/c0f06796-ca08-4f80-88ec-1fd34fcb0854)
 
 
 
