@@ -10,7 +10,7 @@
 
 
 
-![assembly_to_machine](https://github.com/tkwoodstock/Nand2Tetris/assets/92792893/c0f06796-ca08-4f80-88ec-1fd34fcb0854)
+![assembly_to_machine](https://github.com/tkwoodstock/Nand2Tetris/assets/92792893/b05f9a72-1c4f-459e-8736-ef8ca5af83b9)
 
 
 
