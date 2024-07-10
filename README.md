@@ -50,7 +50,6 @@
 
 
 
-
 ## Project 10 - Code Compiler Part 1: Syntax Analysis
 * JackAnalyser.py takes a file or directory as an argument and translates each ".jack" file into a ".xml" file in a top-down parse tree approach
 * The result is acheived with three classes: JackAnalyser, JackTokeniser, and CompilationEngine
