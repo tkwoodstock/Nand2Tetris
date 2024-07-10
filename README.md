@@ -8,7 +8,8 @@
     * A-instructions (to target A-register)
     * C-instructions (to target ALU and PC)
 
-![assembly_to_machine_language_gif](https://github.com/tkwoodstock/Nand2Tetris/assets/92792893/ea7d8bf1-72c7-47f6-912e-c19b1500aedd)
+
+![Assembly_to_machine_vid](https://github.com/tkwoodstock/Nand2Tetris/assets/92792893/39916917-3056-4c83-be32-1113da9841cd)
 
 
 
