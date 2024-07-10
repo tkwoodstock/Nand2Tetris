@@ -46,8 +46,8 @@
 * JackAnalyser.py takes a file or directory as an argument and translates each ".jack" file into a ".xml" file
 * The result is acheived with three classes: JackAnalyser, JackTokeniser, and CompilationEngine
     * JackAnalyser: Defines keywords, creates blank xml files for output, instanciates JackTokeniser and Compilation Engine
-    * JackTokeniser: Reads input jack file character by character, groups collections of characters that satisfy the "token" definition, and stores in a list
-    * CompilationEngine: Reads the list of tokens provided by the JackTokeniser and writes to xml format if tokens are in an appropriate order according to jack language syntax
+    * JackTokeniser: Reads input jack file character by character, parses into grouped collections of characters that satisfy the "token" definition, stored in a list
+    * CompilationEngine: Reads the list of tokens provided by the JackTokeniser and writes to xml format if tokens are in an appropriate order according to jack language syntax specification
 * Class methods have been written for each of the above, to provide the required functionality
 * Full compilation of jack language is completed in project 10, where the tokenised xml translation of the jack file is translated to jack virtual machine language (loosely based on java bytecode)
 
