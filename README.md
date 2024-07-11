@@ -9,7 +9,11 @@ boolean logic, logic gates, memory, computer architecture, machine langauge, ass
 
 This repository contains my solutions to some of the projects in the course.
 * Projects 1-5 are omitted as the solutions will have low degrees of variability between course participants. These projects (1-5) cover logic gates and boolean logic, building registers and RAM, machine language, assembly code, and computer architecture.
-* Projects 6-12 allow for more flexbility in implementation between course participants and as such are a better reflection of my own individual work as a result of completing this course; details for each of these projects can be seen below.
+* Projects 6-12 allow for more flexbility in implementation between course participants and as such are a better reflection of my own individual work as a result of completing this course; details for each of these projects can be seen below. Taken together, projects 6-12 demonstrate the entire process of:
+  1. Writing high-level language 
+  2. Compiling to platform-independent virtual machine code (stack processing, branching, and flow control)
+  3. Translating virtual machine code to assembly code (addressing registers and CPU arithmetic)
+  4. Translating assembly code into machine code (16-bit instructions for ROM, CPU, and RAM)
 
 
 ## Project 6 - Assembly Code to Machine Code Translator
