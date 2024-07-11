@@ -1,5 +1,17 @@
 # Tyler Woodstock Projects for Nand2Tetris
 
+## Overview
+Nand2Tetris is an online course delivered by Noam Nisan and Shimon Schocken at the Hebrew University of Jerusalem. 
+
+The course covers lower level computing concepts to give a better understanding of what happens "underneath the hood" of a modern computer and how higher-level programming languages are designed and developed. 
+The structure of the course follows a trajectory of increasing computing complexity from low level logic gates up to a high-level programming language and full operating system, covering concepts such as:
+boolean logic, logic gates, memory, computer architecture, machine langauge, assembly code, virtual machines, code compilation, and high-level object oriented programming.
+
+This repository contains my solutions to some of the projects in the course.
+* Projects 1-5 are omitted as the solutions will have low degrees of variability between course participants. These projects (1-5) cover logic gates and boolean logic, building registers and RAM, machine language, assembly code, and computer architecture.
+* Projects 6-12 allow for more flexbility in implementation between course participants and as such are a better reflection of my own individual work as a result of completing this course; details for each of these projects can be seen below.
+
+
 ## Project 6 - Assembly Code to Machine Code Translator
 * Assembly code translator that processes Hack assembly language and translates into 16-bit machine code
 * Low level architecture provided by Nand2Tetris project brief
