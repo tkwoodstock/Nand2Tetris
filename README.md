@@ -71,7 +71,7 @@ This repository contains my solutions to some of the projects in the course.
     * JackTokeniser: Reads input jack file character by character, parses into grouped collections of characters that satisfy the "token" definition, stored in a list
     * CompilationEngine: Reads the list of tokens provided by the JackTokeniser and writes to xml format if tokens are in an appropriate order according to jack language syntax specification
 * Class methods have been written for each of the above, to provide the required functionality
-* Full compilation of jack language is completed in project 10, where the tokenised xml translation of the jack file is translated to jack virtual machine language (loosely based on java bytecode)
+* Full compilation of jack language is completed in project 10, where the jack file is translated directly to jack virtual machine language (loosely based on java bytecode)
 
 
 ![jack_to_xml](https://github.com/tkwoodstock/Nand2Tetris/assets/92792893/0134bd55-15e2-4903-bb29-f2fe3572de0a)
