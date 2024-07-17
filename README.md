@@ -1,7 +1,7 @@
 # Tyler Woodstock Projects for Nand2Tetris
 
 ## Overview
-Nand2Tetris is an online course delivered by Noam Nisan and Shimon Schocken at the Hebrew University of Jerusalem. 
+Nand2Tetris is a free online course delivered by Noam Nisan and Shimon Schocken at the Hebrew University of Jerusalem. 
 
 The course covers lower level computing concepts to give a better understanding of what happens "underneath the hood" of a modern computer and how higher-level programming languages are designed and developed. 
 The structure of the course follows a trajectory of increasing computing complexity from low level logic gates up to a high-level programming language and full operating system, covering concepts such as:
